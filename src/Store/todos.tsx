@@ -20,15 +20,26 @@ export type TodoContext = {
   deleteTodo(id: string): void;
 };
 export const TodoContextProvider = ({ children }: TodoContextProviderProps) => {
-  const [todos, setTodos] = React.useState<Todo[]>(() => {
+  /*const [todos, setTodos] = React.useState<Todo[]>(() => {
+
     try {
       return JSON.parse(localStorage.getItem("todos") || "[]") as Todo[];
     } catch (error) {
       return [];
     }
-  });
+  });*/
 
-  const handleAddToDo = (task: string) => {
+  const initialTodos = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("todos") || "[]") as Todo[];
+    } catch (error) {
+      return [];
+    }
+  })();
+
+  const [todos, setTodos] = React.useState<Todo[]>(initialTodos);
+
+  /* const handleAddToDo = (task: string) => {
     setTodos((prev) => {
       const newTask: Todo[] = [
         {
@@ -38,6 +49,22 @@ export const TodoContextProvider = ({ children }: TodoContextProviderProps) => {
           task: task,
         },
         ...prev,
+      ];
+      localStorage.setItem("todos", JSON.stringify(newTask));
+      return newTask;
+    });
+  };*/
+  const handleAddToDo = (task: string) => {
+    setTodos((prev) => {
+      const prevArray = prev ? prev : [];
+      const newTask: Todo[] = [
+        {
+          id: Math.random().toString(),
+          isCompleted: false,
+          createdAt: new Date(),
+          task: task,
+        },
+        ...prevArray, // Spread the elements of prevArray
       ];
       localStorage.setItem("todos", JSON.stringify(newTask));
       return newTask;
@@ -78,3 +105,9 @@ export const usetodos = () => {
   if (!todosConsumer) throw Error("Cannot use todo outside of provider");
   return todosConsumer;
 };
+
+/*
+const TodoContextProvider = ({ children }: TodoContextProviderProps) => {
+  
+ 
+};*/
